@@ -123,14 +123,8 @@ h1 span { color: #ffffff; }
   background: linear-gradient(90deg, transparent, #e6c47e, transparent);
 }
 
-.sub {
-  font-size: 1.2rem;
-  font-style: italic;
-  margin: 0 0 22px;
-}
-
 /* Search bar */
-.search-box { position: relative; max-width: 460px; margin: 0 auto; }
+.search-box { position: relative; max-width: 460px; margin: 0 auto; margin-top: 48px; }
 
 input {
   width: 100%;
@@ -151,8 +145,11 @@ input:focus {
   box-shadow: 0 0 0 6px rgba(230, 196, 126, 0.4), 0 0 40px rgba(230, 196, 126, 0.8);
 }
 
-.mainName{
-  font-family: 'Amellina';
+#search{
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  margin: 0 0 6px;
 }
 
 /* Names that show while typing */
