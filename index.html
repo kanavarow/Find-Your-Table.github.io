@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kanavaro &amp; Simele | Find Your Table</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <p class="welcome">Welcome to the Engagement of</p>
+    <h1>Kanavaro & Simele</h1>
+    <div class="divider"></div>
+    <p class="sub">Search your name to find your table</p>
+
+    <div class="search-box">
+      <input id="search" type="text" placeholder="Type your name..." autocomplete="off" aria-label="Search your name">
+      <ul id="suggestions"></ul>
+    </div>
+
+    <div id="result"></div>
+  </main>
+
+  <script src="guests.js"></script>
+  <script>
+    const input = document.getElementById("search");
+    const list = document.getElementById("suggestions");
+    const result = document.getElementById("result");
+
+    function normalize(t) {
+      return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    }
+
+    function getMatches() {
+      const q = normalize(input.value);
+      if (q.length < 2) return null;
+      return guests.filter(g => normalize(g.name).includes(q));
+    }
+
+    input.addEventListener("input", () => {
+      list.innerHTML = "";
+      result.innerHTML = "";
+      const matches = getMatches();
+
+      if (matches === null) { list.classList.remove("open"); return; }
+      list.classList.add("open");
+
+      if (matches.length === 0) {
+        list.innerHTML = '<li class="none">No match found. Try just your first or last name, or ask one of our team.</li>';
+        return;
+      }
+
+      matches.slice(0, 8).forEach(g => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="n">${esc(g.name)}</span><span class="t">Table ${esc(g.table)}</span>`;
+        li.addEventListener("click", () => show(g));
+        list.appendChild(li);
+      });
+
+      if (matches.length > 8) {
+        const more = document.createElement("li");
+        more.className = "none";
+        more.textContent = "Keep typing to narrow it down...";
+        list.appendChild(more);
+      }
+    });
+
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        const matches = getMatches();
+        if (matches && matches.length) show(matches[0]);
+      }
+    });
+
+    function show(g) {
+      list.classList.remove("open");
+      input.value = g.name;
+      input.blur();
+      result.innerHTML = `
+        <div class="card">
+          <p class="small">Dear</p>
+          <h2>${esc(g.name)}</h2>
+          <p class="small">you are seated at</p>
+          <div class="big">Table ${esc(g.table)}</div>
+          <p class="small">Enjoy the celebration ♥</p>
+        </div>`;
+    }
+  </script>
+</body>
+</html>
